@@ -1,11 +1,11 @@
-export const VERSION = "0.3";
+export const VERSION = "0.4";
 
 /** Shown once when a new version opens, and any time from the version chip. */
 export const WHATS_NEW = {
   title: `Version ${VERSION}`,
   new: [
-    "The click now sounds on all four beats by default. For the jazz feel, turn off 1 and 3 in Settings to click on 2 and 4 only.",
-    "Brick numbers start over at 1 on every new wall, so each wall is one chorus: bars 1–16 (or 1–32).",
+    "Count-in: press play and you get one bar of four clicks (\"Count in…\") before the wall starts building.",
+    "Don't want it? Turn off \"Count in\" in Settings and the wall starts the moment you press play.",
   ],
   tryThis: [
     "Play along at a fast tempo (250+). Do the click and the sweep feel locked together?",

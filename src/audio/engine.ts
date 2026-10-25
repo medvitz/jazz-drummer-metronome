@@ -19,6 +19,8 @@ export interface EngineOptions {
   /** Beats in the bar that click, 1-based (default [2, 4]). */
   clickBeats: number[];
   volume: number; // 0..1
+  /** Bars of count-in at the start (click on every beat). */
+  countInBars: number;
 }
 
 export class Engine {
@@ -84,6 +86,10 @@ export class Engine {
     if (this.playing) this.timeline.setTempo(this.nextBeat, bpm);
   }
 
+  setCountInBars(bars: number): void {
+    this.opts.countInBars = bars;
+  }
+
   setClickBeats(beats: number[]): void {
     this.opts.clickBeats = beats;
   }
@@ -120,7 +126,9 @@ export class Engine {
       if (t >= horizon) break;
       const beatInBar = (this.nextBeat % BEATS_PER_BAR) + 1;
       // Skip a beat that's already in the past (e.g. tab was suspended).
-      if (t >= ctx.currentTime - 0.005 && this.opts.clickBeats.includes(beatInBar)) {
+      const inCountIn = this.nextBeat < this.opts.countInBars * BEATS_PER_BAR;
+      const clicks = inCountIn || this.opts.clickBeats.includes(beatInBar);
+      if (t >= ctx.currentTime - 0.005 && clicks) {
         const src = ctx.createBufferSource();
         src.buffer = this.hihat;
         src.connect(this.master);

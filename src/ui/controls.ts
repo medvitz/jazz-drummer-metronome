@@ -118,6 +118,13 @@ export class Controls {
       });
     }
 
+    const countIn = $<HTMLInputElement>("countInToggle");
+    countIn.checked = this.s.countIn;
+    countIn.addEventListener("change", () => {
+      this.s.countIn = countIn.checked;
+      saveSettings(this.s);
+    });
+
     const vol = $<HTMLInputElement>("volume");
     vol.value = String(this.s.volume);
     vol.addEventListener("input", () => {

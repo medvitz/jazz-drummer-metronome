@@ -67,7 +67,10 @@ function frame() {
   wall.draw(wallG, wallCanvas.clientWidth, wallCanvas.clientHeight, ws, perWall);
 
   const started = running && beat >= 0;
-  const text = started ? `Bar ${info.bar + 1} · Wall ${ws.wallIndex + 1}` : "Tap play to start";
+  // Bar count restarts with each wall, matching the brick numbers.
+  const text = started
+    ? `Wall ${Math.floor(info.bar / perWall) + 1} · Bar ${(info.bar % perWall) + 1}`
+    : "Tap play to start";
   if (text !== lastHud) hud.textContent = lastHud = text;
 
   requestAnimationFrame(frame);

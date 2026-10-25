@@ -3,8 +3,8 @@
 A metronome that lets you *see* time, built with Joel.
 
 - **Film-leader countdown circle** counts 1–4. The wedge sweeps once per beat.
-- **Hi-hat "chick" on 2 and 4** by default. Change which beats click in Settings.
-- **A numbered brick** drops on every beat 4 and lands on the next downbeat. After 16 or 32 bars the wall clears like a Tetris line, and the numbers keep counting.
+- **Hi-hat "chick" on every beat** by default (2 and 4 only is a setting). Change which beats click in Settings.
+- **A numbered brick** drops on every beat 4 and lands on the next downbeat. After 16 or 32 bars the wall clears like a Tetris line, and the next wall starts numbering again at 1.
 
 It's a web app that can be added to a phone's home screen (a PWA). The plan is to wrap it as an Android app later, and maybe iOS.
 

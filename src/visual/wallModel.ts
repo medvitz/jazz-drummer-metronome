@@ -6,7 +6,7 @@
  *
  *  - The brick for bar b (0-based) starts falling when beat 4 of that bar
  *    begins and lands exactly on the next downbeat.
- *  - Bricks are numbered by bar and keep counting across walls (1, 2, ... 17 ...).
+ *  - Bricks are numbered by their bar within the wall, so each new wall starts again at 1.
  *  - When a wall's last brick lands, the wall clears during beats 1-3 of the
  *    next bar, so the next wall's first brick still lands on time.
  */
@@ -43,7 +43,7 @@ export function wallState(beat: number, perWall: number): WallState {
     for (let slot = 0; slot < perWall; slot++) {
       bricks.push({
         slot,
-        number: wallIndex * perWall + slot + 1,
+        number: slot + 1,
         fall: 1,
         sinceLand: slot === perWall - 1 ? inBar : Infinity,
       });
@@ -57,7 +57,7 @@ export function wallState(beat: number, perWall: number): WallState {
   for (let slot = 0; slot < landed; slot++) {
     bricks.push({
       slot,
-      number: wallIndex * perWall + slot + 1,
+      number: slot + 1,
       fall: 1,
       sinceLand: slot === landed - 1 ? inBar : Infinity,
     });
@@ -65,7 +65,7 @@ export function wallState(beat: number, perWall: number): WallState {
   if (inBar >= FALL_START) {
     bricks.push({
       slot: landed,
-      number: wallIndex * perWall + landed + 1,
+      number: landed + 1,
       fall: inBar - FALL_START,
       sinceLand: Infinity,
     });

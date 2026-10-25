@@ -23,16 +23,16 @@ describe("wallState", () => {
     expect(s.wallIndex).toBe(0);
   });
 
-  it("keeps counting on the next wall", () => {
-    // Beat 67.5: beat 4 of bar 17 -> brick 17 falling into wall 2.
+  it("restarts numbering on the next wall", () => {
+    // Beat 67.5: beat 4 of bar 17 -> wall 2, brick 1 falling.
     const s = wallState(67.5, 16);
     expect(s.clearing).toBeNull();
     expect(s.wallIndex).toBe(1);
     expect(s.bricks).toHaveLength(1);
-    expect(s.bricks[0]).toMatchObject({ slot: 0, number: 17 });
-    // Brick 17 landed, brick 18 falling.
+    expect(s.bricks[0]).toMatchObject({ slot: 0, number: 1 });
+    // Wall 2: brick 1 landed, brick 2 falling.
     const t = wallState(71.5, 16);
-    expect(t.bricks.map((b) => b.number)).toEqual([17, 18]);
+    expect(t.bricks.map((b) => b.number)).toEqual([1, 2]);
   });
 
   it("supports 32-brick walls", () => {
@@ -40,6 +40,6 @@ describe("wallState", () => {
     expect(wallState(64.5, 32).bricks).toHaveLength(16);
     expect(wallState(128.5, 32).bricks).toHaveLength(32);
     expect(wallState(128.5, 32).clearing).not.toBeNull();
-    expect(wallState(131.5, 32).bricks[0].number).toBe(33);
+    expect(wallState(131.5, 32).bricks[0].number).toBe(1);
   });
 });

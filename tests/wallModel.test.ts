@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { wallBeat, wallState } from "../src/visual/wallModel";
+import { wallBar, wallBeat, wallState } from "../src/visual/wallModel";
 
 describe("wallState", () => {
   it("is empty during the first three beats", () => {
@@ -59,8 +59,25 @@ describe("count-in", () => {
     expect(wallState(wallBeat(8, 2), 16).bricks[0].fall).toBe(1);
   });
 
-  it("off: the wall starts right away", () => {
-    expect(wallBeat(3.5, 0)).toBe(3.5);
-    expect(wallState(wallBeat(3.5, 0), 16).bricks).toHaveLength(1);
+  it("off: brick 1 lands on the very first click, brick 2 on the next 1", () => {
+    // Just before the first click (beat -0.5) brick 1 is mid-fall...
+    expect(wallState(wallBeat(-0.5, 0), 16).bricks[0]).toMatchObject({ number: 1, fall: 0.5 });
+    // ...lands on the first click (beat 0)...
+    expect(wallState(wallBeat(0, 0), 16).bricks[0]).toMatchObject({ number: 1, fall: 1 });
+    // ...and brick 2 lands on the next 1.
+    expect(wallState(wallBeat(4, 0), 16).bricks.map((x) => x.number)).toEqual([1, 2]);
+    expect(wallBar(0, 0)).toBe(0);
+    expect(wallBar(4, 0)).toBe(1);
+  });
+
+  it("the bar counter matches the top brick in every mode", () => {
+    for (const n of [0, 1, 2]) {
+      for (let bar = 0; bar < 15; bar++) {
+        const beat = n * 4 + bar * 4 + 0.5; // just after the 1 of each wall bar
+        const bricks = wallState(wallBeat(beat, n), 16).bricks;
+        expect(wallBar(beat, n)).toBe(bar);
+        expect(bricks[bricks.length - 1].number).toBe(bar + 1);
+      }
+    }
   });
 });

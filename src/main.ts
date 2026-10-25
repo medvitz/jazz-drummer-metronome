@@ -5,7 +5,7 @@ import { loadSettings } from "./settings";
 import { Controls } from "./ui/controls";
 import { Leader } from "./visual/leader";
 import { WallRenderer } from "./visual/wall";
-import { wallBeat, wallState } from "./visual/wallModel";
+import { wallBar, wallBeat, wallState } from "./visual/wallModel";
 
 registerSW({ immediate: true });
 
@@ -50,7 +50,11 @@ ro.observe(wallCanvas);
 ro.observe(leaderCanvas);
 
 // When stopped, freeze on the last frame so you can see how far you got.
-let frozenBeat = 0;
+// A reset (Settings changed) clears it back to an empty wall.
+const RESET = -1e9;
+let frozenBeat = RESET;
+/** With count-in off, brick 1 falls during this short gap between Play and the first click. */
+const NO_COUNT_IN_LEAD = 0.45;
 let perWall = settings.perWall; // locked in when Play is pressed
 let countInBars: number = settings.countInBars; // likewise
 
@@ -74,19 +78,25 @@ function frame() {
   const lh = leaderCanvas.clientHeight;
   leader.draw(leaderG, lw, lh, info.count, beat < 0 ? 0 : info.phase, running);
 
-  const wb = wallBeat(beat, countInBars);
+  let wb = wallBeat(beat, countInBars);
+  if (countInBars === 0 && engine.isPlaying && beat < 0) {
+    // No count-in: brick 1 falls over the lead-in and lands on the first click.
+    const lb = engine.leadBeats || 1;
+    wb = 3 + Math.min(1, Math.max(0, (beat + lb) / lb));
+  }
   const ws = wallState(wb, perWall);
+  debug.wall = ws;
   wall.draw(wallG, wallCanvas.clientWidth, wallCanvas.clientHeight, ws, perWall);
 
-  const started = running && beat >= 0;
-  const countingIn = started && beat < countInBars * 4;
+  const started = running && beat > RESET / 2;
+  const countingIn = started && beat >= 0 && beat < countInBars * 4;
   // Bar count restarts with each wall, matching the brick numbers.
-  const wallBar = Math.floor(Math.max(0, wb) / 4);
+  const bar = Math.max(0, wallBar(beat, countInBars));
   const text = !started
     ? "Tap play to start"
-    : countingIn
+    : countingIn || beat < 0
       ? "" // the big overlay says it (and brick 1 is on its way)
-      : `Wall ${Math.floor(wallBar / perWall) + 1} · Bar ${(wallBar % perWall) + 1}`;
+      : `Wall ${Math.floor(bar / perWall) + 1} · Bar ${(bar % perWall) + 1}`;
   if (text !== lastHud) hud.textContent = lastHud = text;
 
   // "Count in..." overlay, with a dot lighting up on each click.
@@ -128,7 +138,7 @@ const controls = new Controls(settings, {
       countInBars = settings.countInBars;
       engine.setCountInBars(countInBars);
       buildDots(countInBars * 4);
-      await engine.start();
+      await engine.start(countInBars === 0 ? NO_COUNT_IN_LEAD : 0.15);
       controls.setPlaying(true);
       keepAwake(true);
     }
@@ -136,7 +146,19 @@ const controls = new Controls(settings, {
   onBpm: (bpm) => engine.setBpm(bpm),
   onClickBeats: (beats) => engine.setClickBeats(beats),
   onVolume: (v) => engine.setVolume(v),
+  // Any change in Settings stops the metronome and clears the wall.
+  onSettingsChanged() {
+    if (engine.isPlaying) {
+      engine.stop();
+      controls.setPlaying(false);
+      keepAwake(false);
+    }
+    frozenBeat = RESET;
+    perWall = settings.perWall;
+    countInBars = settings.countInBars;
+  },
 });
 
 // Handy for timing checks from the browser console / tests.
-(window as unknown as { __jdm: unknown }).__jdm = { engine, settings };
+const debug: { engine: Engine; settings: typeof settings; wall?: unknown } = { engine, settings };
+(window as unknown as { __jdm: unknown }).__jdm = debug;

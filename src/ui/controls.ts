@@ -8,6 +8,8 @@ export interface ControlCallbacks {
   onBpm: (bpm: number) => void;
   onClickBeats: (beats: number[]) => void;
   onVolume: (v: number) => void;
+  /** Called after any change in the Settings panel. */
+  onSettingsChanged: () => void;
 }
 
 export class Controls {
@@ -17,7 +19,6 @@ export class Controls {
   private perWallInputs = Array.from(
     document.querySelectorAll<HTMLInputElement>('#perWall input[type="radio"]'),
   );
-  private perWallHint = $<HTMLParagraphElement>("perWallHint");
 
   constructor(
     private s: Settings,
@@ -33,11 +34,6 @@ export class Controls {
   setPlaying(on: boolean): void {
     this.playBtn.classList.toggle("on", on);
     this.playBtn.setAttribute("aria-label", on ? "Stop" : "Start");
-    // Changing wall size mid-run would scramble the numbering.
-    for (const i of this.perWallInputs) i.disabled = on;
-    this.perWallHint.textContent = on
-      ? "Stop the metronome to change this."
-      : "Each wall is one chorus: 16 or 32 bars.";
   }
 
   private setBpm(bpm: number): void {
@@ -107,6 +103,7 @@ export class Controls {
         this.s.clickBeats = beatInputs.filter((x) => x.checked).map((x) => Number(x.value));
         this.cb.onClickBeats(this.s.clickBeats);
         saveSettings(this.s);
+        this.cb.onSettingsChanged();
       });
     }
 
@@ -115,6 +112,7 @@ export class Controls {
       i.addEventListener("change", () => {
         if (i.checked) this.s.perWall = Number(i.value) as 16 | 32;
         saveSettings(this.s);
+        this.cb.onSettingsChanged();
       });
     }
 
@@ -123,6 +121,7 @@ export class Controls {
       i.addEventListener("change", () => {
         if (i.checked) this.s.countInBars = Number(i.value) as 0 | 1 | 2;
         saveSettings(this.s);
+        this.cb.onSettingsChanged();
       });
     }
 
@@ -132,6 +131,7 @@ export class Controls {
       this.s.volume = Number(vol.value);
       this.cb.onVolume(this.s.volume);
       saveSettings(this.s);
+      this.cb.onSettingsChanged();
     });
 
     const off = $<HTMLInputElement>("offset");
@@ -143,6 +143,7 @@ export class Controls {
       this.s.visualOffsetMs = Number(off.value);
       showOff();
       saveSettings(this.s);
+      this.cb.onSettingsChanged();
     });
 
     this.setPlaying(false);

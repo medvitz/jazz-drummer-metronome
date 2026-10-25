@@ -15,7 +15,7 @@
       <header class="top">
         <div class="brand">
           <span class="brand-name">Jazz Drummer Metronome</span>
-          <button id="versionChip" class="chip" aria-label="What's new">v0.5</button>
+          <button id="versionChip" class="chip" aria-label="What's new">v0.6</button>
         </div>
         <button id="settingsBtn" class="icon-btn" aria-label="Settings">
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
@@ -53,6 +53,7 @@
     <dialog id="settingsDlg" class="sheet">
       <form method="dialog">
         <h2>Settings</h2>
+        <p class="hint">Changing a setting stops the metronome and starts the wall fresh.</p>
 
         <section>
           <h3>Click on beats</h3>
@@ -72,7 +73,7 @@
             <label><input type="radio" name="countInBars" value="1" /><span>1 bar</span></label>
             <label><input type="radio" name="countInBars" value="2" /><span>2 bars</span></label>
           </div>
-          <p class="hint">Count-in clicks every beat. The last count-in bar counts as bar 1, so brick 1 lands right as the count-in ends.</p>
+          <p class="hint">Count-in clicks every beat, and brick 1 lands right as it ends. Off: brick 1 drops the moment you press play.</p>
         </section>
 
         <section>
@@ -81,7 +82,7 @@
             <label><input type="radio" name="perWall" value="16" /><span>16 bars</span></label>
             <label><input type="radio" name="perWall" value="32" /><span>32 bars</span></label>
           </div>
-          <p class="hint" id="perWallHint">Takes effect next time you press play.</p>
+          <p class="hint">Each wall is one chorus: 16 or 32 bars.</p>
         </section>
 
         <section>

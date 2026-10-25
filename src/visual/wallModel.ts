@@ -16,12 +16,22 @@ export const CLEAR_BEATS = 3;
 export const FALL_START = 3; // beat-in-bar when a brick starts falling (beat "4")
 
 /**
- * Beat position on the wall's own clock. The clicks of the last count-in bar
- * count toward brick 1, so brick 1 lands on the first 1 after the count-in.
- * Negative during any earlier count-in bar.
+ * Beat position on the wall's own clock.
+ *
+ * Rule for every mode: brick N lands on the 1 of wall bar N, after falling
+ * during the beat before it.
+ *  - Count-in on: brick 1 falls on the last count-in click and lands as the
+ *    count-in ends.
+ *  - Count-in off (0 bars): brick 1 lands on the very first click, right
+ *    after Play. (main.ts stretches its fall over the short lead-in.)
  */
 export function wallBeat(beat: number, countInBars: number): number {
-  return beat - Math.max(0, countInBars - 1) * BEATS_PER_BAR;
+  return beat - (countInBars - 1) * BEATS_PER_BAR;
+}
+
+/** 0-based bar of the wall run (bar 0 = the bar brick 1 lands on). Negative during count-in. */
+export function wallBar(beat: number, countInBars: number): number {
+  return Math.floor((beat - countInBars * BEATS_PER_BAR) / BEATS_PER_BAR);
 }
 
 export interface BrickState {

@@ -44,7 +44,11 @@ export class Engine {
     return this.ctx;
   }
 
-  async start(): Promise<void> {
+  /** Beats between pressing Play and the first click (set by start()). */
+  leadBeats = 0;
+
+  /** Start playing; the first click sounds `lead` seconds from now. */
+  async start(lead = 0.15): Promise<void> {
     if (this.playing) return;
     if (!this.ctx) {
       this.ctx = new AudioContext({ latencyHint: "interactive" });
@@ -56,7 +60,8 @@ export class Engine {
     const now = this.ctx.currentTime;
     this.master!.gain.cancelScheduledValues(now);
     this.master!.gain.setValueAtTime(this.opts.volume, now);
-    this.timeline.start(this.ctx.currentTime + 0.15, this.opts.bpm);
+    this.timeline.start(this.ctx.currentTime + lead, this.opts.bpm);
+    this.leadBeats = (lead * this.opts.bpm) / 60;
     this.nextBeat = 0;
     this.playing = true;
     if (!this.worker) {

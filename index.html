@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0d0d0f" />
+    <meta name="description" content="A metronome that lets you see time: a film-leader count and a brick wall that builds bar by bar." />
+    <link rel="icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <title>Jazz Drummer Metronome</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="top">
+        <div class="brand">
+          <span class="brand-name">Jazz Drummer Metronome</span>
+          <button id="versionChip" class="chip" aria-label="What's new">v0.1</button>
+        </div>
+        <button id="settingsBtn" class="icon-btn" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.4 7.4 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.4 7.4 0 0 0-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1a7.4 7.4 0 0 0 1.7 1l.4 2.6h4l.4-2.6a7.4 7.4 0 0 0 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></svg>
+        </button>
+      </header>
+
+      <div class="stage">
+        <div class="wall-wrap">
+          <canvas id="wall"></canvas>
+          <div id="hud" class="hud">Bar — · Wall 1</div>
+        </div>
+        <div class="leader-wrap">
+          <canvas id="leader" aria-label="Countdown circle. Tap to start or stop."></canvas>
+        </div>
+      </div>
+
+      <footer class="controls">
+        <div class="tempo">
+          <button id="bpmDown" class="step" aria-label="Slower">−</button>
+          <div class="bpm-readout"><span id="bpmValue">120</span><small>BPM</small></div>
+          <button id="bpmUp" class="step" aria-label="Faster">+</button>
+        </div>
+        <input id="bpmSlider" type="range" min="40" max="320" step="1" value="120" aria-label="Tempo" />
+        <button id="playBtn" class="play" aria-label="Start">
+          <svg class="i-play" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>
+          <svg class="i-stop" viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect fill="currentColor" x="5" y="5" width="14" height="14" rx="1.5"/></svg>
+        </button>
+      </footer>
+    </div>
+
+    <dialog id="settingsDlg" class="sheet">
+      <form method="dialog">
+        <h2>Settings</h2>
+
+        <section>
+          <h3>Click on beats</h3>
+          <div class="beat-toggles" id="beatToggles">
+            <label><input type="checkbox" value="1" /><span>1</span></label>
+            <label><input type="checkbox" value="2" /><span>2</span></label>
+            <label><input type="checkbox" value="3" /><span>3</span></label>
+            <label><input type="checkbox" value="4" /><span>4</span></label>
+          </div>
+          <p class="hint">Jazz default: 2 and 4, like the hi-hat foot.</p>
+        </section>
+
+        <section>
+          <h3>Bricks per wall</h3>
+          <div class="segmented" id="perWall">
+            <label><input type="radio" name="perWall" value="16" /><span>16 bars</span></label>
+            <label><input type="radio" name="perWall" value="32" /><span>32 bars</span></label>
+          </div>
+          <p class="hint" id="perWallHint">Takes effect next time you press play.</p>
+        </section>
+
+        <section>
+          <h3>Click volume</h3>
+          <input id="volume" type="range" min="0" max="1" step="0.01" />
+        </section>
+
+        <section>
+          <h3>Visual offset <output id="offsetOut">0 ms</output></h3>
+          <input id="offset" type="range" min="-250" max="250" step="5" />
+          <p class="hint">Only needed with Bluetooth speakers or headphones, where sound arrives late. Slide right until the sweep and click line up.</p>
+        </section>
+
+        <div class="actions"><button class="primary" value="close">Done</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="newsDlg" class="sheet">
+      <form method="dialog">
+        <h2 id="newsTitle"></h2>
+        <h3>What's new</h3>
+        <ul id="newsList"></ul>
+        <h3>What to try</h3>
+        <ul id="tryList"></ul>
+        <div class="actions"><button class="primary" value="close">Got it</button></div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -58,14 +58,19 @@ html, body {
   cursor: pointer;
 }
 .icon-btn {
-  background: none;
-  border: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
   color: var(--text);
-  padding: 6px;
-  border-radius: 10px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 14px;
   cursor: pointer;
+  flex: none;
 }
-.icon-btn:active { background: var(--panel); }
+.icon-btn:active { background: #2b2e36; }
 
 .stage {
   flex: 1;

@@ -1,13 +1,11 @@
-export const VERSION = "0.1";
+export const VERSION = "0.2";
 
 /** Shown once when a new version opens, and any time from the version chip. */
 export const WHATS_NEW = {
-  title: `Version ${VERSION}: first look`,
+  title: `Version ${VERSION}`,
   new: [
-    "Film-leader countdown circle that counts 1–4 and sweeps once per beat.",
-    "Hi-hat \"chick\" on 2 and 4 (change which beats click in Settings).",
-    "A numbered brick drops on every beat 4 and lands on the next downbeat.",
-    "After 16 bars (or 32, in Settings) the wall clears and a new one starts. Numbers keep counting.",
+    "Bricks now stack straight on top of each other in neat columns of 4.",
+    "Each brick still lands right on the \"1\" of the next bar.",
   ],
   tryThis: [
     "Play along at a fast tempo (250+). Do the click and the sweep feel locked together?",

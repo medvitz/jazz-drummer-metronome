@@ -63,10 +63,10 @@ export class WallRenderer {
     const pad = Math.max(10, w * 0.04);
     const plateH = Math.max(8, h * 0.035);
     const usableH = h - plateH - pad * 1.6;
-    let bw = (w - pad * 2) / (COLS + 0.5);
+    let bw = (w - pad * 2) / COLS;
     let bh = Math.min(usableH / rows, bw * 0.5);
     if (bh < bw * 0.3) bw = Math.min(bw, bh / 0.3); // keep bricks brick-shaped
-    const wallW = bw * (COLS + 0.5);
+    const wallW = bw * COLS;
     const x0 = (w - wallW) / 2;
     const base = h - plateH;
 
@@ -75,7 +75,7 @@ export class WallRenderer {
     g.fillRect(x0 - bw * 0.15, base, wallW + bw * 0.3, plateH);
     g.fillStyle = "#5c6168";
     const studW = bw * 0.16;
-    for (let i = 0; i < (COLS + 0.5) * 4 + 1; i++) {
+    for (let i = 0; i < COLS * 4 + 1; i++) {
       const sx = x0 - bw * 0.1 + i * (bw / 4) + bw / 8 - studW / 2;
       g.fillRect(sx, base - plateH * 0.35, studW, plateH * 0.35);
     }
@@ -88,7 +88,7 @@ export class WallRenderer {
     for (const b of state.bricks) {
       const row = Math.floor(b.slot / COLS);
       const col = b.slot % COLS;
-      const x = x0 + (row % 2 ? bw * 0.5 : 0) + col * bw;
+      const x = x0 + col * bw; // stacked straight up, no offset
       const targetY = base - (row + 1) * bh;
       const startY = -bh * 1.6;
       const y = startY + (targetY - startY) * b.fall * b.fall; // falls like gravity

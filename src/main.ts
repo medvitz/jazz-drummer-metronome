@@ -14,14 +14,21 @@ const engine = new Engine({
   bpm: settings.bpm,
   clickBeats: settings.clickBeats,
   volume: settings.volume,
-  countInBars: settings.countIn ? 1 : 0,
+  countInBars: settings.countInBars,
 });
 
 const wallCanvas = document.getElementById("wall") as HTMLCanvasElement;
 const leaderCanvas = document.getElementById("leader") as HTMLCanvasElement;
 const hud = document.getElementById("hud") as HTMLDivElement;
 const countInEl = document.getElementById("countIn") as HTMLDivElement;
-const countInDots = Array.from(countInEl.querySelectorAll<HTMLSpanElement>(".dots span"));
+const dotsEl = countInEl.querySelector(".dots") as HTMLDivElement;
+let countInDots: HTMLSpanElement[] = [];
+/** One dot per count-in click (4 or 8). */
+function buildDots(n: number) {
+  countInDots = Array.from({ length: n }, () => document.createElement("span"));
+  dotsEl.replaceChildren(...countInDots);
+}
+buildDots(4);
 const wallG = wallCanvas.getContext("2d")!;
 const leaderG = leaderCanvas.getContext("2d")!;
 const leader = new Leader();
@@ -45,7 +52,7 @@ ro.observe(leaderCanvas);
 // When stopped, freeze on the last frame so you can see how far you got.
 let frozenBeat = 0;
 let perWall = settings.perWall; // locked in when Play is pressed
-let countInBars = settings.countIn ? 1 : 0; // likewise
+let countInBars: number = settings.countInBars; // likewise
 
 // Test hook: ?beat=67.5 shows a still frame at that beat position.
 const demoBeat = new URLSearchParams(location.search).get("beat");
@@ -72,19 +79,19 @@ function frame() {
   wall.draw(wallG, wallCanvas.clientWidth, wallCanvas.clientHeight, ws, perWall);
 
   const started = running && beat >= 0;
-  const countingIn = started && wb < 0;
+  const countingIn = started && beat < countInBars * 4;
   // Bar count restarts with each wall, matching the brick numbers.
   const wallBar = Math.floor(Math.max(0, wb) / 4);
   const text = !started
     ? "Tap play to start"
     : countingIn
-      ? "" // the big overlay says it
+      ? "" // the big overlay says it (and brick 1 is on its way)
       : `Wall ${Math.floor(wallBar / perWall) + 1} · Bar ${(wallBar % perWall) + 1}`;
   if (text !== lastHud) hud.textContent = lastHud = text;
 
   // "Count in..." overlay, with a dot lighting up on each click.
   countInEl.hidden = !countingIn;
-  if (countingIn) countInDots.forEach((d, i) => d.classList.toggle("on", i < info.count));
+  if (countingIn) countInDots.forEach((d, i) => d.classList.toggle("on", i <= Math.floor(beat)));
 
   requestAnimationFrame(frame);
 }
@@ -118,8 +125,9 @@ const controls = new Controls(settings, {
       keepAwake(false);
     } else {
       perWall = settings.perWall;
-      countInBars = settings.countIn ? 1 : 0;
+      countInBars = settings.countInBars;
       engine.setCountInBars(countInBars);
+      buildDots(countInBars * 4);
       await engine.start();
       controls.setPlaying(true);
       keepAwake(true);

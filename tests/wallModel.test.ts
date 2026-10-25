@@ -45,17 +45,21 @@ describe("wallState", () => {
 });
 
 describe("count-in", () => {
-  it("keeps the wall empty for the count-in bar, then builds as normal", () => {
-    // With one bar of count-in, beats 0-3.99 are the count-in.
-    expect(wallBeat(2, 1)).toBeLessThan(0);
-    expect(wallState(wallBeat(3.5, 1), 16).bricks).toHaveLength(0);
-    // Beat 4 of the first wall bar (overall beat 7.5): brick 1 falling.
-    expect(wallState(wallBeat(7.5, 1), 16).bricks[0]).toMatchObject({ number: 1, fall: 0.5 });
-    // ...and it lands on the next 1 (overall beat 8).
-    expect(wallState(wallBeat(8, 1), 16).bricks[0].fall).toBe(1);
+  it("1 bar: the count-in clicks count toward brick 1", () => {
+    // Brick 1 falls on the count-in's beat 4 and lands on the first 1 after it.
+    expect(wallState(wallBeat(2, 1), 16).bricks).toHaveLength(0);
+    expect(wallState(wallBeat(3.5, 1), 16).bricks[0]).toMatchObject({ number: 1, fall: 0.5 });
+    expect(wallState(wallBeat(4, 1), 16).bricks[0]).toMatchObject({ number: 1, fall: 1 });
   });
 
-  it("with count-in off, the wall starts right away", () => {
+  it("2 bars: first bar is pure count-in, second counts toward brick 1", () => {
+    expect(wallBeat(3.5, 2)).toBeLessThan(0);
+    expect(wallState(wallBeat(3.5, 2), 16).bricks).toHaveLength(0);
+    expect(wallState(wallBeat(7.5, 2), 16).bricks[0]).toMatchObject({ number: 1, fall: 0.5 });
+    expect(wallState(wallBeat(8, 2), 16).bricks[0].fall).toBe(1);
+  });
+
+  it("off: the wall starts right away", () => {
     expect(wallBeat(3.5, 0)).toBe(3.5);
     expect(wallState(wallBeat(3.5, 0), 16).bricks).toHaveLength(1);
   });

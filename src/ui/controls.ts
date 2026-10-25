@@ -118,12 +118,13 @@ export class Controls {
       });
     }
 
-    const countIn = $<HTMLInputElement>("countInToggle");
-    countIn.checked = this.s.countIn;
-    countIn.addEventListener("change", () => {
-      this.s.countIn = countIn.checked;
-      saveSettings(this.s);
-    });
+    for (const i of document.querySelectorAll<HTMLInputElement>('#countInBars input[type="radio"]')) {
+      i.checked = Number(i.value) === this.s.countInBars;
+      i.addEventListener("change", () => {
+        if (i.checked) this.s.countInBars = Number(i.value) as 0 | 1 | 2;
+        saveSettings(this.s);
+      });
+    }
 
     const vol = $<HTMLInputElement>("volume");
     vol.value = String(this.s.volume);

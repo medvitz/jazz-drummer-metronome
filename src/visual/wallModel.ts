@@ -15,9 +15,13 @@ import { BEATS_PER_BAR } from "../audio/timeline";
 export const CLEAR_BEATS = 3;
 export const FALL_START = 3; // beat-in-bar when a brick starts falling (beat "4")
 
-/** Beat position on the wall's own clock, after any count-in bars. Negative during the count-in. */
+/**
+ * Beat position on the wall's own clock. The clicks of the last count-in bar
+ * count toward brick 1, so brick 1 lands on the first 1 after the count-in.
+ * Negative during any earlier count-in bar.
+ */
 export function wallBeat(beat: number, countInBars: number): number {
-  return beat - countInBars * BEATS_PER_BAR;
+  return beat - Math.max(0, countInBars - 1) * BEATS_PER_BAR;
 }
 
 export interface BrickState {

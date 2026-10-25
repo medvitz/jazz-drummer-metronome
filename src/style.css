@@ -232,7 +232,11 @@ button.primary {
   letter-spacing: 0.01em;
   color: var(--text);
 }
-.count-in .dots { display: flex; gap: 14px; }
+.count-in .dots {
+  display: grid;
+  grid-template-columns: repeat(4, 16px);
+  gap: 14px;
+}
 .count-in .dots span {
   width: 16px;
   height: 16px;
